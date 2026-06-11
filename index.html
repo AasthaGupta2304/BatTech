@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wayne Enterprises — Executive Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ═══ COVER PAGE ═══════════════════════════════════════════ -->
+<div id="cover">
+  <div class="cover-grid"></div>
+  <div class="cover-scanbar"></div>
+  <div class="cover-scanline"></div>
+  <div class="cover-corner tl"></div>
+  <div class="cover-corner tr"></div>
+  <div class="cover-corner bl"></div>
+  <div class="cover-corner br"></div>
+
+  <div style="text-align:center;max-width:480px;z-index:10;padding:0 24px">
+    <div class="cover-logo">🦅</div>
+    <div class="orb" style="color:#4a7ab5;font-size:10px;letter-spacing:7px;margin-bottom:8px;opacity:.65">WAYNE ENTERPRISES</div>
+    <div class="orb" style="color:#c8d6e5;font-size:24px;font-weight:900;margin-bottom:4px">EXECUTIVE PORTAL</div>
+    <div class="mono" style="color:#3a5a7a;font-size:10px;margin-bottom:40px;letter-spacing:2px">2089 · SECURE ENTERPRISE SYSTEM · BUILD 9.2.1</div>
+
+    <div class="cover-box">
+      <div class="mono" style="color:#4a7ab5;font-size:10px;margin-bottom:14px;text-align:left;letter-spacing:2px">EXECUTIVE ACCESS CODE</div>
+      <input id="cover-input" class="cover-input" type="password" placeholder="Enter code…" autocomplete="off"/>
+      <div class="mono" style="font-size:10px;color:#dc3232;margin:8px 0 16px;opacity:0;transition:opacity .3s;letter-spacing:1px" id="cover-err">ACCESS DENIED</div>
+      <button class="cover-btn" id="cover-auth-btn">AUTHENTICATE</button>
+    </div>
+
+    <div class="mono" style="color:#2a4a6a;font-size:10px;margin-top:14px;cursor:pointer;letter-spacing:1px" id="cover-hint">[ FORGOT EXECUTIVE CODE? ]</div>
+    <div class="mono" style="color:#1a2a3a;font-size:9px;margin-top:8px;letter-spacing:1px">UNAUTHORIZED ACCESS IS MONITORED · GCPD LIAISON ACTIVE</div>
+  </div>
+
+  <!-- Stock Ticker -->
+  <div class="cover-ticker">
+    <div class="mono" style="color:#1a3a5a;font-size:10px;padding:0 12px;border-right:1px solid #0e1e30;flex-shrink:0;letter-spacing:1px">WNE</div>
+    <div class="ticker-track">
+      <span class="mono" style="font-size:10px;color:#2a4a6a">WNE $4,821.33 ▲2.4%</span>
+      <span class="mono" style="font-size:10px;color:#2a4a6a">Q3 EARNINGS BEAT BY 18%</span>
+      <span class="mono" style="font-size:10px;color:#3a5a2a">WAYNETECH PATENT APPROVED</span>
+      <span class="mono" style="font-size:10px;color:#2a4a6a">BOARD MEETING NOV 15 2089</span>
+      <span class="mono" style="font-size:10px;color:#3a5a2a">FOUNDATION DONATES $50M TO GOTHAM</span>
+      <span class="mono" style="font-size:10px;color:#2a4a6a">NEW AI DEFENSE CONTRACT RUMORS</span>
+      <span class="mono" style="font-size:10px;color:#2a4a6a">WNE $4,821.33 ▲2.4%</span>
+      <span class="mono" style="font-size:10px;color:#2a4a6a">Q3 EARNINGS BEAT BY 18%</span>
+      <span class="mono" style="font-size:10px;color:#2a4a6a">WAYNETECH PATENT APPROVED</span>
+      <span class="mono" style="font-size:10px;color:#2a4a6a">BOARD MEETING NOV 15 2089</span>
+      <span class="mono" style="font-size:10px;color:#3a5a2a">FOUNDATION DONATES $50M TO GOTHAM</span>
+      <span class="mono" style="font-size:10px;color:#2a4a6a">NEW AI DEFENSE CONTRACT RUMORS</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD ════════════════════════════════════════════ -->
+<div id="dashboard">
+
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <div class="sidebar-logo">🦇</div>
+    <button class="sidebar-btn" data-panel="missions" title="Missions">⚔
+      <span class="tooltip">MISSIONS</span>
+    </button>
+    <button class="sidebar-btn" data-panel="comms" title="Comms">📡
+      <span class="tooltip">COMMS</span>
+    </button>
+    <button class="sidebar-btn" data-panel="equipment" title="Equipment">🔧
+      <span class="tooltip">EQUIPMENT</span>
+    </button>
+    <button class="sidebar-btn" data-panel="map" title="Map">🗺
+      <span class="tooltip">GOTHAM MAP</span>
+    </button>
+    <div class="sidebar-divider"></div>
+    <button class="sidebar-btn" data-panel="music" title="Music">🎵
+      <span class="tooltip">BAT-MUSIC</span>
+    </button>
+    <button class="sidebar-btn" data-panel="wayne" title="Wayne Enterprises">🏢
+      <span class="tooltip">WAYNE ENT.</span>
+    </button>
+  </div>
+
+  <!-- Main -->
+  <div id="main">
+    <!-- Header -->
+    <div id="header">
+      <div class="header-title" id="header-title">MISSIONS & ACTIVE QUESTS</div>
+      <div class="header-stat">THREAT LEVEL: <span>CRITICAL</span></div>
+      <div class="header-divider"></div>
+      <div class="header-clock" id="header-clock">00:00:00</div>
+      <div class="header-divider"></div>
+      <div class="header-stat">GOTHAM CITY · 2089</div>
+      <div class="status-dot"></div>
+    </div>
+    <!-- Panel -->
+    <div id="panel"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
