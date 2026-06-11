@@ -1,109 +1,965 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Wayne Enterprises — Executive Portal</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wayne Enterprises — Executive Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bat-yellow:#F6C90E;--bat-dark:#0a0a0c;--bat-panel:#111118;--bat-card:#1a1a24;
+    --bat-border:#2a2a3a;--bat-text:#e8e8f0;--bat-muted:#6b6b8a;
+    --we-blue:#1a3a6b;--we-light:#f5f7fa;--we-accent:#2563eb;--we-text:#1e293b;
+    --we-muted:#64748b;--we-border:#e2e8f0;--we-card:#ffffff;
+  }
+  body{font-family:'Inter',sans-serif;background:#f5f7fa;overflow:hidden;height:100vh;width:100%}
+
+  #we-portal{position:absolute;inset:0;background:var(--we-light);display:flex;flex-direction:column;transition:all 0.8s ease;z-index:100}
+  .we-topbar{background:var(--we-blue);color:white;padding:0 32px;height:52px;display:flex;align-items:center;justify-content:space-between}
+  .we-logo{display:flex;align-items:center;gap:12px;font-weight:600;font-size:15px;letter-spacing:0.5px}
+  .we-logo-icon{width:32px;height:32px;background:var(--bat-yellow);border-radius:50%;display:flex;align-items:center;justify-content:center}
+  .we-logo-icon svg{width:18px;height:18px}
+  .we-nav{display:flex;gap:8px}
+  .we-nav-btn{background:rgba(255,255,255,0.1);border:none;color:white;padding:6px 16px;border-radius:6px;font-size:13px;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif}
+  .we-nav-btn:hover{background:rgba(255,255,255,0.2)}
+  .we-nav-btn.active{background:var(--bat-yellow);color:var(--we-blue);font-weight:600}
+  .we-main{display:flex;flex:1;overflow:hidden}
+  .we-sidebar{width:220px;background:var(--we-card);border-right:1px solid var(--we-border);padding:20px 0}
+  .we-sidebar-section{padding:0 16px;margin-bottom:20px}
+  .we-sidebar-title{font-size:11px;font-weight:600;color:var(--we-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+  .we-sidebar-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;font-size:13px;color:var(--we-text);cursor:pointer;transition:all 0.15s;margin-bottom:2px}
+  .we-sidebar-item:hover{background:#f1f5f9}
+  .we-sidebar-item.active{background:#dbeafe;color:var(--we-accent);font-weight:500}
+  .we-sidebar-dot{width:6px;height:6px;border-radius:50%;background:var(--we-accent)}
+  .we-content{flex:1;padding:28px 32px;overflow-y:auto}
+  .we-header{margin-bottom:24px}
+  .we-header h1{font-size:22px;font-weight:600;color:var(--we-text);margin-bottom:4px}
+  .we-header p{font-size:14px;color:var(--we-muted)}
+  .we-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+  .we-metric{background:var(--we-card);border:1px solid var(--we-border);border-radius:10px;padding:16px}
+  .we-metric-label{font-size:12px;color:var(--we-muted);margin-bottom:6px}
+  .we-metric-value{font-size:22px;font-weight:600;color:var(--we-text)}
+  .we-metric-change{font-size:12px;color:#16a34a;margin-top:3px}
+  .we-metric-change.down{color:#dc2626}
+  .we-grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+  .we-card{background:var(--we-card);border:1px solid var(--we-border);border-radius:10px;padding:20px}
+  .we-card h3{font-size:14px;font-weight:600;color:var(--we-text);margin-bottom:14px}
+  .we-table{width:100%;font-size:13px;border-collapse:collapse}
+  .we-table th{text-align:left;font-weight:500;color:var(--we-muted);padding:6px 8px;border-bottom:1px solid var(--we-border)}
+  .we-table td{padding:8px 8px;color:var(--we-text);border-bottom:1px solid #f8fafc}
+  .we-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500}
+  .we-badge.green{background:#dcfce7;color:#166534}
+  .we-badge.blue{background:#dbeafe;color:#1e40af}
+  .we-badge.orange{background:#fff7ed;color:#c2410c}
+  .we-badge.red{background:#fee2e2;color:#991b1b}
+  .we-progress-bar{height:6px;background:#f1f5f9;border-radius:3px;overflow:hidden;margin-top:6px}
+  .we-progress-fill{height:100%;background:var(--we-accent);border-radius:3px;transition:width 1s ease}
+  .we-project{margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #f1f5f9}
+  .we-project:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+  .we-project-name{font-size:13px;font-weight:500;color:var(--we-text);margin-bottom:4px}
+  .we-project-meta{font-size:12px;color:var(--we-muted);display:flex;justify-content:space-between}
+  .we-footer{background:var(--we-card);border-top:1px solid var(--we-border);padding:10px 32px;display:flex;align-items:center;justify-content:space-between}
+  .we-footer-text{font-size:12px;color:var(--we-muted)}
+  .we-secret-btn{background:none;border:1px solid var(--we-border);color:var(--we-muted);padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer;font-family:'Courier Prime',monospace;transition:all 0.2s}
+  .we-secret-btn:hover{border-color:var(--bat-yellow);color:var(--bat-yellow);background:rgba(246,201,14,0.05)}
+  .secret-hint{font-size:11px;color:var(--we-muted);opacity:0.4;font-family:'Courier Prime',monospace}
+
+  #riddle-modal{display:none;position:absolute;inset:0;background:rgba(0,0,0,0.85);z-index:200;align-items:center;justify-content:center}
+  #riddle-modal.show{display:flex}
+  .riddle-box{background:#0d0d15;border:1px solid #2a2a40;border-radius:16px;padding:36px 40px;max-width:480px;width:90%;position:relative}
+  .riddle-box::before{content:'';position:absolute;inset:-1px;border-radius:16px;background:linear-gradient(135deg,rgba(246,201,14,0.3),transparent,rgba(246,201,14,0.1));z-index:-1}
+  .riddle-alfred{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+  .alfred-avatar{width:48px;height:48px;border-radius:50%;background:#1a1a2e;border:2px solid var(--bat-yellow);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+  .alfred-name{font-size:14px;font-weight:600;color:var(--bat-yellow);margin-bottom:2px;font-family:'Rajdhani',sans-serif;letter-spacing:1px}
+  .alfred-title{font-size:12px;color:var(--bat-muted);font-family:'Courier Prime',monospace}
+  .alfred-typing{font-family:'Courier Prime',monospace;font-size:13px;color:#a0a0c0;line-height:1.7;min-height:100px;margin-bottom:20px}
+  .riddle-text{color:#d0d0e8;font-style:italic;border-left:2px solid var(--bat-yellow);padding-left:14px;margin:14px 0 20px;font-size:14px;line-height:1.7;font-family:'Courier Prime',monospace}
+  .riddle-input-row{display:flex;gap:10px}
+  .riddle-input{flex:1;background:#1a1a28;border:1px solid #3a3a50;border-radius:8px;padding:10px 14px;color:var(--bat-text);font-family:'Courier Prime',monospace;font-size:14px;outline:none;transition:border-color 0.2s}
+  .riddle-input:focus{border-color:var(--bat-yellow)}
+  .riddle-input::placeholder{color:var(--bat-muted)}
+  .riddle-submit{background:var(--bat-yellow);border:none;color:#0a0a0c;padding:10px 20px;border-radius:8px;font-weight:700;font-family:'Rajdhani',sans-serif;font-size:15px;cursor:pointer;letter-spacing:1px;transition:all 0.2s}
+  .riddle-submit:hover{background:#ffda20;transform:scale(1.02)}
+  .riddle-error{font-size:12px;color:#ff6b6b;margin-top:8px;min-height:18px;font-family:'Courier Prime',monospace}
+  .riddle-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--bat-muted);font-size:18px;cursor:pointer;transition:color 0.2s}
+  .riddle-close:hover{color:var(--bat-text)}
+
+  #bat-dash{position:absolute;inset:0;background:var(--bat-dark);display:none;flex-direction:column;font-family:'Rajdhani',sans-serif}
+  #bat-dash.show{display:flex}
+  .bat-topbar{background:var(--bat-panel);border-bottom:1px solid var(--bat-border);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+  .bat-logo{display:flex;align-items:center;gap:14px}
+  .bat-symbol{width:44px;height:28px}
+  .bat-title{font-size:18px;font-weight:700;color:var(--bat-yellow);letter-spacing:3px;text-transform:uppercase}
+  .bat-subtitle{font-size:11px;color:var(--bat-muted);letter-spacing:2px;text-transform:uppercase;margin-top:1px}
+  .bat-status{display:flex;align-items:center;gap:20px}
+  .bat-status-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--bat-muted);font-family:'Courier Prime',monospace}
+  .bat-status-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e}
+  .bat-status-dot.red{background:#ef4444;box-shadow:0 0 6px #ef4444}
+  .bat-status-dot.yellow{background:var(--bat-yellow);box-shadow:0 0 6px var(--bat-yellow)}
+  .bat-body{display:flex;flex:1;overflow:hidden}
+  .bat-nav{width:64px;background:var(--bat-panel);border-right:1px solid var(--bat-border);display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:4px;flex-shrink:0}
+  .bat-nav-item{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;position:relative;border:1px solid transparent}
+  .bat-nav-item:hover{background:rgba(246,201,14,0.1);border-color:rgba(246,201,14,0.2)}
+  .bat-nav-item.active{background:rgba(246,201,14,0.15);border-color:rgba(246,201,14,0.4)}
+  .bat-nav-item svg{width:20px;height:20px;fill:var(--bat-muted);transition:fill 0.2s}
+  .bat-nav-item.active svg,.bat-nav-item:hover svg{fill:var(--bat-yellow)}
+  .bat-nav-sep{width:32px;height:1px;background:var(--bat-border);margin:6px 0}
+  .bat-main{flex:1;overflow:hidden;display:flex;flex-direction:column}
+  .bat-tabs{display:flex;border-bottom:1px solid var(--bat-border);background:var(--bat-panel);padding:0 20px;flex-shrink:0}
+  .bat-tab{padding:14px 20px;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--bat-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap}
+  .bat-tab.active{color:var(--bat-yellow);border-bottom-color:var(--bat-yellow)}
+  .bat-tab:hover:not(.active){color:var(--bat-text)}
+  .bat-content{flex:1;overflow:hidden;position:relative}
+  .bat-panel{position:absolute;inset:0;overflow-y:auto;padding:20px;display:none}
+  .bat-panel.active{display:block}
+  .bat-grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+  .bat-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+  .bat-card{background:var(--bat-card);border:1px solid var(--bat-border);border-radius:10px;padding:18px;position:relative;overflow:hidden}
+  .bat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--bat-yellow);opacity:0.4}
+  .bat-card h3{font-size:13px;color:var(--bat-muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+  .bat-card.accent::before{opacity:1}
+  .mission-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--bat-border)}
+  .mission-item:last-child{border-bottom:none;padding-bottom:0}
+  .mission-priority{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0}
+  .mission-priority.critical{background:#ef4444;box-shadow:0 0 6px #ef4444}
+  .mission-priority.high{background:var(--bat-yellow);box-shadow:0 0 4px var(--bat-yellow)}
+  .mission-priority.medium{background:#22c55e}
+  .mission-priority.low{background:var(--bat-muted)}
+  .mission-info{flex:1}
+  .mission-name{font-size:14px;font-weight:600;color:var(--bat-text);margin-bottom:3px}
+  .mission-meta{font-size:12px;color:var(--bat-muted);font-family:'Courier Prime',monospace}
+  .mission-status{font-size:11px;padding:3px 8px;border-radius:4px;letter-spacing:1px;font-weight:600}
+  .mission-status.active{background:rgba(246,201,14,0.15);color:var(--bat-yellow)}
+  .mission-status.pending{background:rgba(100,100,120,0.2);color:var(--bat-muted)}
+  .mission-status.complete{background:rgba(34,197,94,0.15);color:#22c55e}
+  .mission-status.urgent{background:rgba(239,68,68,0.15);color:#ef4444}
+  .mission-check{width:20px;height:20px;border-radius:4px;border:1px solid var(--bat-border);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s}
+  .mission-check:hover{border-color:var(--bat-yellow)}
+  .mission-check.done{background:var(--bat-yellow);border-color:var(--bat-yellow)}
+  .mission-check.done::after{content:'✓';font-size:12px;color:#0a0a0c;font-weight:700}
+  .bat-input{background:#0d0d15;border:1px solid var(--bat-border);border-radius:8px;padding:10px 14px;color:var(--bat-text);font-family:'Rajdhani',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s;width:100%}
+  .bat-input:focus{border-color:var(--bat-yellow)}
+  .bat-input::placeholder{color:var(--bat-muted)}
+  .bat-btn{background:var(--bat-yellow);border:none;color:#0a0a0c;padding:10px 18px;border-radius:8px;font-weight:700;font-family:'Rajdhani',sans-serif;font-size:14px;cursor:pointer;letter-spacing:1px;transition:all 0.2s}
+  .bat-btn:hover{background:#ffda20;transform:scale(1.02)}
+  .bat-btn.secondary{background:transparent;border:1px solid var(--bat-border);color:var(--bat-text)}
+  .bat-btn.secondary:hover{border-color:var(--bat-yellow);color:var(--bat-yellow)}
+  .comm-msg{display:flex;gap:10px;margin-bottom:14px;align-items:flex-start}
+  .comm-msg.sent{flex-direction:row-reverse}
+  .comm-avatar{width:34px;height:34px;border-radius:50%;background:var(--bat-border);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;border:1px solid rgba(246,201,14,0.2)}
+  .comm-bubble{max-width:75%;background:var(--bat-card);border:1px solid var(--bat-border);border-radius:10px;padding:10px 14px;font-family:'Courier Prime',monospace;font-size:13px;color:var(--bat-text);line-height:1.5}
+  .comm-msg.sent .comm-bubble{background:rgba(246,201,14,0.1);border-color:rgba(246,201,14,0.3)}
+  .comm-meta{font-size:10px;color:var(--bat-muted);margin-top:5px;letter-spacing:0.5px}
+  .comm-contact{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;cursor:pointer;transition:all 0.15s;border:1px solid transparent;margin-bottom:6px}
+  .comm-contact:hover{background:rgba(246,201,14,0.05);border-color:rgba(246,201,14,0.15)}
+  .comm-contact.active{background:rgba(246,201,14,0.08);border-color:rgba(246,201,14,0.25)}
+  .comm-contact-name{font-size:14px;font-weight:600;color:var(--bat-text)}
+  .comm-contact-status{font-size:11px;color:var(--bat-muted);font-family:'Courier Prime',monospace}
+  .online-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;margin-left:auto}
+  .online-dot.offline{background:var(--bat-muted)}
+  .comm-layout{display:flex;gap:14px;height:100%}
+  .comm-contacts{width:200px;flex-shrink:0}
+  .comm-chat{flex:1;display:flex;flex-direction:column}
+  .comm-messages{flex:1;overflow-y:auto;padding-right:4px;margin-bottom:12px;max-height:320px}
+  .equip-item{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--bat-border)}
+  .equip-item:last-child{border-bottom:none}
+  .equip-icon{width:40px;height:40px;border-radius:8px;background:rgba(246,201,14,0.1);border:1px solid rgba(246,201,14,0.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .equip-info{flex:1}
+  .equip-name{font-size:14px;font-weight:600;color:var(--bat-text)}
+  .equip-spec{font-size:12px;color:var(--bat-muted);font-family:'Courier Prime',monospace;margin-top:2px}
+  .equip-bar{height:4px;background:rgba(255,255,255,0.08);border-radius:2px;margin-top:6px;overflow:hidden}
+  .equip-bar-fill{height:100%;border-radius:2px;transition:width 0.8s ease}
+  .equip-bar-fill.green{background:#22c55e}
+  .equip-bar-fill.yellow{background:var(--bat-yellow)}
+  .equip-bar-fill.red{background:#ef4444}
+  .equip-toggle{width:44px;height:24px;border-radius:12px;background:rgba(255,255,255,0.1);border:none;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0}
+  .equip-toggle.on{background:var(--bat-yellow)}
+  .equip-toggle::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:white;transition:transform 0.2s}
+  .equip-toggle.on::after{transform:translateX(20px)}
+  .music-player{background:var(--bat-card);border:1px solid var(--bat-border);border-radius:12px;padding:20px;margin-bottom:14px}
+  .music-artwork{width:100%;height:140px;background:#0d0d18;border-radius:8px;margin-bottom:16px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+  .music-art-visual{width:80px;height:80px;border-radius:50%;border:3px solid var(--bat-yellow);display:flex;align-items:center;justify-content:center;animation:spin 4s linear infinite;animation-play-state:paused}
+  .music-art-visual.playing{animation-play-state:running}
+  @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+  .music-art-inner{width:20px;height:20px;border-radius:50%;background:var(--bat-yellow)}
+  .music-title{font-size:16px;font-weight:600;color:var(--bat-text);margin-bottom:2px}
+  .music-artist{font-size:13px;color:var(--bat-muted);margin-bottom:14px;font-family:'Courier Prime',monospace}
+  .music-seek{width:100%;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;appearance:none;outline:none;cursor:pointer}
+  .music-seek::-webkit-slider-thumb{appearance:none;width:12px;height:12px;border-radius:50%;background:var(--bat-yellow);cursor:pointer}
+  .music-times{display:flex;justify-content:space-between;font-size:11px;color:var(--bat-muted);font-family:'Courier Prime',monospace;margin-top:4px}
+  .music-controls{display:flex;align-items:center;justify-content:center;gap:20px}
+  .music-btn{background:none;border:none;color:var(--bat-muted);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;border-radius:50%}
+  .music-btn:hover{color:var(--bat-text)}
+  .music-btn.play{width:48px;height:48px;background:var(--bat-yellow);color:#0a0a0c;border-radius:50%}
+  .music-btn.play:hover{background:#ffda20;transform:scale(1.05)}
+  .music-btn svg{pointer-events:none}
+  .music-volume{display:flex;align-items:center;gap:8px;margin-top:14px}
+  .music-vol-slider{flex:1;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;appearance:none;outline:none;cursor:pointer}
+  .music-vol-slider::-webkit-slider-thumb{appearance:none;width:12px;height:12px;border-radius:50%;background:var(--bat-yellow)}
+  .music-playlist{background:var(--bat-card);border:1px solid var(--bat-border);border-radius:12px;padding:14px}
+  .music-playlist h3{font-size:13px;color:var(--bat-muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+  .playlist-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;cursor:pointer;transition:all 0.15s}
+  .playlist-item:hover{background:rgba(246,201,14,0.05)}
+  .playlist-item.active{background:rgba(246,201,14,0.1)}
+  .playlist-num{font-size:12px;color:var(--bat-muted);width:20px;font-family:'Courier Prime',monospace}
+  .playlist-info{flex:1}
+  .playlist-title{font-size:13px;color:var(--bat-text);font-weight:500}
+  .playlist-artist{font-size:11px;color:var(--bat-muted);font-family:'Courier Prime',monospace}
+  .playlist-dur{font-size:12px;color:var(--bat-muted);font-family:'Courier Prime',monospace}
+  .alfred-sidebar{width:240px;background:var(--bat-panel);border-left:1px solid var(--bat-border);display:flex;flex-direction:column;flex-shrink:0}
+  .alfred-header{padding:16px;border-bottom:1px solid var(--bat-border)}
+  .alfred-header-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .alfred-ava{width:38px;height:38px;border-radius:50%;background:#1a1a2e;border:2px solid var(--bat-yellow);display:flex;align-items:center;justify-content:center;font-size:18px}
+  .alfred-header-name{font-size:14px;font-weight:700;color:var(--bat-yellow);letter-spacing:1px}
+  .alfred-header-status{font-size:11px;color:#22c55e;font-family:'Courier Prime',monospace}
+  .alfred-chat{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
+  .alfred-msg{background:var(--bat-card);border:1px solid var(--bat-border);border-radius:8px;padding:10px 12px;font-family:'Courier Prime',monospace;font-size:12px;color:var(--bat-text);line-height:1.6}
+  .alfred-msg.user{background:rgba(246,201,14,0.08);border-color:rgba(246,201,14,0.2);text-align:right}
+  .alfred-msg .msg-label{font-size:10px;color:var(--bat-muted);margin-bottom:4px;letter-spacing:1px;text-transform:uppercase}
+  .alfred-input-area{padding:12px;border-top:1px solid var(--bat-border)}
+  .alfred-input-row{display:flex;gap:8px}
+  .alfred-input{flex:1;background:#0d0d15;border:1px solid var(--bat-border);border-radius:6px;padding:8px 10px;color:var(--bat-text);font-family:'Courier Prime',monospace;font-size:12px;outline:none;transition:border-color 0.2s}
+  .alfred-input:focus{border-color:var(--bat-yellow)}
+  .alfred-send{background:var(--bat-yellow);border:none;color:#0a0a0c;width:32px;height:32px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}
+  .alfred-send:hover{background:#ffda20}
+  .fade-in{animation:fadeIn 0.4s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .bat-metric{background:#0d0d18;border:1px solid var(--bat-border);border-radius:8px;padding:12px}
+  .bat-metric-label{font-size:11px;color:var(--bat-muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+  .bat-metric-value{font-size:24px;font-weight:700;color:var(--bat-yellow);font-family:'Rajdhani',sans-serif}
+  .bat-metric-sub{font-size:11px;color:var(--bat-muted);margin-top:2px;font-family:'Courier Prime',monospace}
+  ::-webkit-scrollbar{width:4px;height:4px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--bat-border);border-radius:2px}
+  ::-webkit-scrollbar-thumb:hover{background:var(--bat-muted)}
+  .threat-bar{height:8px;border-radius:4px;background:rgba(255,255,255,0.06);overflow:hidden;margin-top:8px}
+  .threat-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#22c55e,var(--bat-yellow),#ef4444);transition:width 0.8s}
+  select.bat-input{cursor:pointer}
+  .flash{animation:flashY 0.5s ease}
+  @keyframes flashY{0%,100%{background:var(--bat-card)}50%{background:rgba(246,201,14,0.15)}}
+</style>
 </head>
 <body>
 
-<!-- ═══ COVER PAGE ═══════════════════════════════════════════ -->
-<div id="cover">
-  <div class="cover-grid"></div>
-  <div class="cover-scanbar"></div>
-  <div class="cover-scanline"></div>
-  <div class="cover-corner tl"></div>
-  <div class="cover-corner tr"></div>
-  <div class="cover-corner bl"></div>
-  <div class="cover-corner br"></div>
-
-  <div style="text-align:center;max-width:480px;z-index:10;padding:0 24px">
-    <div class="cover-logo">🦅</div>
-    <div class="orb" style="color:#4a7ab5;font-size:10px;letter-spacing:7px;margin-bottom:8px;opacity:.65">WAYNE ENTERPRISES</div>
-    <div class="orb" style="color:#c8d6e5;font-size:24px;font-weight:900;margin-bottom:4px">EXECUTIVE PORTAL</div>
-    <div class="mono" style="color:#3a5a7a;font-size:10px;margin-bottom:40px;letter-spacing:2px">2089 · SECURE ENTERPRISE SYSTEM · BUILD 9.2.1</div>
-
-    <div class="cover-box">
-      <div class="mono" style="color:#4a7ab5;font-size:10px;margin-bottom:14px;text-align:left;letter-spacing:2px">EXECUTIVE ACCESS CODE</div>
-      <input id="cover-input" class="cover-input" type="password" placeholder="Enter code…" autocomplete="off"/>
-      <div class="mono" style="font-size:10px;color:#dc3232;margin:8px 0 16px;opacity:0;transition:opacity .3s;letter-spacing:1px" id="cover-err">ACCESS DENIED</div>
-      <button class="cover-btn" id="cover-auth-btn">AUTHENTICATE</button>
+<!-- WAYNE ENTERPRISES PORTAL -->
+<div id="we-portal">
+  <div class="we-topbar">
+    <div class="we-logo">
+      <div class="we-logo-icon">
+        <svg viewBox="0 0 24 24" fill="#1a3a6b"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+      </div>
+      WAYNE ENTERPRISES
     </div>
-
-    <div class="mono" style="color:#2a4a6a;font-size:10px;margin-top:14px;cursor:pointer;letter-spacing:1px" id="cover-hint">[ FORGOT EXECUTIVE CODE? ]</div>
-    <div class="mono" style="color:#1a2a3a;font-size:9px;margin-top:8px;letter-spacing:1px">UNAUTHORIZED ACCESS IS MONITORED · GCPD LIAISON ACTIVE</div>
+    <div class="we-nav">
+      <button class="we-nav-btn active">Dashboard</button>
+      <button class="we-nav-btn">Projects</button>
+      <button class="we-nav-btn">Finance</button>
+      <button class="we-nav-btn">R&amp;D</button>
+      <button class="we-nav-btn">HR</button>
+    </div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.7)">Bruce Wayne, CEO &nbsp;·&nbsp; Thu, Jun 2089</div>
   </div>
-
-  <!-- Stock Ticker -->
-  <div class="cover-ticker">
-    <div class="mono" style="color:#1a3a5a;font-size:10px;padding:0 12px;border-right:1px solid #0e1e30;flex-shrink:0;letter-spacing:1px">WNE</div>
-    <div class="ticker-track">
-      <span class="mono" style="font-size:10px;color:#2a4a6a">WNE $4,821.33 ▲2.4%</span>
-      <span class="mono" style="font-size:10px;color:#2a4a6a">Q3 EARNINGS BEAT BY 18%</span>
-      <span class="mono" style="font-size:10px;color:#3a5a2a">WAYNETECH PATENT APPROVED</span>
-      <span class="mono" style="font-size:10px;color:#2a4a6a">BOARD MEETING NOV 15 2089</span>
-      <span class="mono" style="font-size:10px;color:#3a5a2a">FOUNDATION DONATES $50M TO GOTHAM</span>
-      <span class="mono" style="font-size:10px;color:#2a4a6a">NEW AI DEFENSE CONTRACT RUMORS</span>
-      <span class="mono" style="font-size:10px;color:#2a4a6a">WNE $4,821.33 ▲2.4%</span>
-      <span class="mono" style="font-size:10px;color:#2a4a6a">Q3 EARNINGS BEAT BY 18%</span>
-      <span class="mono" style="font-size:10px;color:#2a4a6a">WAYNETECH PATENT APPROVED</span>
-      <span class="mono" style="font-size:10px;color:#2a4a6a">BOARD MEETING NOV 15 2089</span>
-      <span class="mono" style="font-size:10px;color:#3a5a2a">FOUNDATION DONATES $50M TO GOTHAM</span>
-      <span class="mono" style="font-size:10px;color:#2a4a6a">NEW AI DEFENSE CONTRACT RUMORS</span>
+  <div class="we-main">
+    <div class="we-sidebar">
+      <div class="we-sidebar-section">
+        <div class="we-sidebar-title">Overview</div>
+        <div class="we-sidebar-item active"><div class="we-sidebar-dot"></div>Executive Dashboard</div>
+        <div class="we-sidebar-item"><div class="we-sidebar-dot" style="background:#16a34a"></div>Operations</div>
+        <div class="we-sidebar-item"><div class="we-sidebar-dot" style="background:#ea580c"></div>Strategic Initiatives</div>
+      </div>
+      <div class="we-sidebar-section">
+        <div class="we-sidebar-title">Divisions</div>
+        <div class="we-sidebar-item">WayneTech Aerospace</div>
+        <div class="we-sidebar-item">Wayne Pharmaceuticals</div>
+        <div class="we-sidebar-item">Wayne Biomedical</div>
+        <div class="we-sidebar-item">Wayne Defense Systems</div>
+        <div class="we-sidebar-item">Wayne Tower Properties</div>
+      </div>
+      <div class="we-sidebar-section">
+        <div class="we-sidebar-title">Reports</div>
+        <div class="we-sidebar-item">Q2 2089 Earnings</div>
+        <div class="we-sidebar-item">Board Meeting Notes</div>
+        <div class="we-sidebar-item">ESG Report</div>
+      </div>
+    </div>
+    <div class="we-content">
+      <div class="we-header">
+        <h1>Good morning, Mr. Wayne.</h1>
+        <p>Here's your executive overview for Thursday, June 11, 2089. 3 board notifications require your attention.</p>
+      </div>
+      <div class="we-metrics">
+        <div class="we-metric"><div class="we-metric-label">Market Cap</div><div class="we-metric-value">$4.82T</div><div class="we-metric-change">↑ 2.4% this week</div></div>
+        <div class="we-metric"><div class="we-metric-label">Q2 Revenue</div><div class="we-metric-value">$214B</div><div class="we-metric-change">↑ 8.1% YoY</div></div>
+        <div class="we-metric"><div class="we-metric-label">R&amp;D Budget Used</div><div class="we-metric-value">68%</div><div class="we-metric-change">On track</div></div>
+        <div class="we-metric"><div class="we-metric-label">Global Employees</div><div class="we-metric-value">847K</div><div class="we-metric-change down">↓ 1.2% attrition</div></div>
+      </div>
+      <div class="we-grid2">
+        <div class="we-card">
+          <h3>Active Projects</h3>
+          <div class="we-project">
+            <div style="display:flex;justify-content:space-between;align-items:center"><div class="we-project-name">Project Zeta — Next-Gen Propulsion</div><span class="we-badge green">On Track</span></div>
+            <div class="we-project-meta"><span>WayneTech Aerospace</span><span>Q4 2089</span></div>
+            <div class="we-progress-bar"><div class="we-progress-fill" style="width:72%"></div></div>
+          </div>
+          <div class="we-project">
+            <div style="display:flex;justify-content:space-between;align-items:center"><div class="we-project-name">NeuroLink Medical Interface</div><span class="we-badge orange">Delayed</span></div>
+            <div class="we-project-meta"><span>Wayne Biomedical</span><span>Q1 2090</span></div>
+            <div class="we-progress-bar"><div class="we-progress-fill" style="width:41%;background:#ea580c"></div></div>
+          </div>
+          <div class="we-project">
+            <div style="display:flex;justify-content:space-between;align-items:center"><div class="we-project-name">Quantum Defense Array</div><span class="we-badge blue">In Review</span></div>
+            <div class="we-project-meta"><span>Wayne Defense Systems</span><span>Q3 2090</span></div>
+            <div class="we-progress-bar"><div class="we-progress-fill" style="width:58%;background:#7c3aed"></div></div>
+          </div>
+          <div class="we-project">
+            <div style="display:flex;justify-content:space-between;align-items:center"><div class="we-project-name">Gotham Smart Grid Integration</div><span class="we-badge green">On Track</span></div>
+            <div class="we-project-meta"><span>Wayne Tower Properties</span><span>Q2 2090</span></div>
+            <div class="we-progress-bar"><div class="we-progress-fill" style="width:29%"></div></div>
+          </div>
+        </div>
+        <div class="we-card">
+          <h3>Board Notifications</h3>
+          <table class="we-table">
+            <thead><tr><th>Item</th><th>Type</th><th>Priority</th></tr></thead>
+            <tbody>
+              <tr><td>Merger vote: Lexcorp subsidiary</td><td><span class="we-badge blue">Vote</span></td><td><span class="we-badge red">High</span></td></tr>
+              <tr><td>Q2 earnings call prep</td><td><span class="we-badge orange">Meeting</span></td><td><span class="we-badge orange">Med</span></td></tr>
+              <tr><td>ESG compliance audit</td><td><span class="we-badge green">Report</span></td><td><span class="we-badge green">Low</span></td></tr>
+              <tr><td>UAE expansion approval</td><td><span class="we-badge blue">Approval</span></td><td><span class="we-badge red">High</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="we-footer">
+    <div class="we-footer-text">© 2089 Wayne Enterprises, Inc. — All systems operational</div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <span class="secret-hint">// kernel_access --root</span>
+      <button class="we-secret-btn" onclick="openRiddle()">[ TERMINAL ]</button>
     </div>
   </div>
 </div>
 
-<!-- ═══ DASHBOARD ════════════════════════════════════════════ -->
-<div id="dashboard">
-
-  <!-- Sidebar -->
-  <div id="sidebar">
-    <div class="sidebar-logo">🦇</div>
-    <button class="sidebar-btn" data-panel="missions" title="Missions">⚔
-      <span class="tooltip">MISSIONS</span>
-    </button>
-    <button class="sidebar-btn" data-panel="comms" title="Comms">📡
-      <span class="tooltip">COMMS</span>
-    </button>
-    <button class="sidebar-btn" data-panel="equipment" title="Equipment">🔧
-      <span class="tooltip">EQUIPMENT</span>
-    </button>
-    <button class="sidebar-btn" data-panel="map" title="Map">🗺
-      <span class="tooltip">GOTHAM MAP</span>
-    </button>
-    <div class="sidebar-divider"></div>
-    <button class="sidebar-btn" data-panel="music" title="Music">🎵
-      <span class="tooltip">BAT-MUSIC</span>
-    </button>
-    <button class="sidebar-btn" data-panel="wayne" title="Wayne Enterprises">🏢
-      <span class="tooltip">WAYNE ENT.</span>
-    </button>
-  </div>
-
-  <!-- Main -->
-  <div id="main">
-    <!-- Header -->
-    <div id="header">
-      <div class="header-title" id="header-title">MISSIONS & ACTIVE QUESTS</div>
-      <div class="header-stat">THREAT LEVEL: <span>CRITICAL</span></div>
-      <div class="header-divider"></div>
-      <div class="header-clock" id="header-clock">00:00:00</div>
-      <div class="header-divider"></div>
-      <div class="header-stat">GOTHAM CITY · 2089</div>
-      <div class="status-dot"></div>
+<!-- RIDDLE MODAL -->
+<div id="riddle-modal">
+  <div class="riddle-box fade-in">
+    <button class="riddle-close" onclick="closeRiddle()">✕</button>
+    <div class="riddle-alfred">
+      <div class="alfred-avatar">🎩</div>
+      <div>
+        <div class="alfred-name">ALFRED PENNYWORTH</div>
+        <div class="alfred-title">// Personal Assistant · Batcave AI v8.3</div>
+      </div>
     </div>
-    <!-- Panel -->
-    <div id="panel"></div>
+    <div class="alfred-typing" id="alfred-greeting"></div>
+    <div id="riddle-section" style="display:none">
+      <div class="riddle-text" id="riddle-question"></div>
+      <div class="riddle-input-row">
+        <input class="riddle-input" id="riddle-answer" placeholder="Enter your answer..." onkeydown="if(event.key==='Enter')checkAnswer()">
+        <button class="riddle-submit" onclick="checkAnswer()">ENTER</button>
+      </div>
+      <div class="riddle-error" id="riddle-error"></div>
+    </div>
   </div>
 </div>
 
-<!-- Toast -->
-<div id="toast"></div>
+<!-- BATMAN DASHBOARD -->
+<div id="bat-dash">
+  <div class="bat-topbar">
+    <div class="bat-logo">
+      <svg class="bat-symbol" viewBox="0 0 88 56" fill="none">
+        <path d="M44 8 C35 8 26 14 20 18 C14 14 6 12 2 14 C8 20 10 26 12 32 C8 32 4 34 2 38 C10 36 18 38 24 42 C28 46 36 50 44 50 C52 50 60 46 64 42 C70 38 78 36 86 38 C84 34 80 32 76 32 C78 26 80 20 86 14 C82 12 74 14 68 18 C62 14 53 8 44 8Z" fill="#F6C90E"/>
+      </svg>
+      <div>
+        <div class="bat-title">Batcave OS</div>
+        <div class="bat-subtitle">Gotham City Command · 2089</div>
+      </div>
+    </div>
+    <div class="bat-status">
+      <div class="bat-status-item"><div class="bat-status-dot"></div>Batcave: Secure</div>
+      <div class="bat-status-item"><div class="bat-status-dot yellow"></div>Threat Level: HIGH</div>
+      <div class="bat-status-item"><div class="bat-status-dot red"></div>Active Incidents: 7</div>
+      <div id="bat-clock" class="bat-status-item" style="color:var(--bat-yellow)">00:00:00</div>
+    </div>
+  </div>
+  <div class="bat-body">
+    <div class="bat-nav">
+      <div class="bat-nav-item active" onclick="switchTab('missions')" title="Missions">
+        <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+      </div>
+      <div class="bat-nav-item" onclick="switchTab('comms')" title="Comms">
+        <svg viewBox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+      </div>
+      <div class="bat-nav-item" onclick="switchTab('equipment')" title="Equipment">
+        <svg viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      </div>
+      <div class="bat-nav-item" onclick="switchTab('map')" title="Gotham Map">
+        <svg viewBox="0 0 24 24"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6-10l6-3m0 13l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4"/></svg>
+      </div>
+      <div class="bat-nav-sep"></div>
+      <div class="bat-nav-item" onclick="switchTab('music')" title="Music">
+        <svg viewBox="0 0 24 24"><path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
+      </div>
+    </div>
+    <div class="bat-main">
+      <div class="bat-tabs">
+        <div class="bat-tab active" id="tab-missions" onclick="switchTab('missions')">Missions</div>
+        <div class="bat-tab" id="tab-comms" onclick="switchTab('comms')">Secure Comms</div>
+        <div class="bat-tab" id="tab-equipment" onclick="switchTab('equipment')">Equipment</div>
+        <div class="bat-tab" id="tab-map" onclick="switchTab('map')">Gotham Map</div>
+        <div class="bat-tab" id="tab-music" onclick="switchTab('music')">Music</div>
+      </div>
+      <div class="bat-content">
 
-<script src="app.js"></script>
+        <!-- MISSIONS -->
+        <div class="bat-panel active" id="panel-missions">
+          <div class="bat-grid3" style="margin-bottom:14px">
+            <div class="bat-metric"><div class="bat-metric-label">Active Missions</div><div class="bat-metric-value">4</div><div class="bat-metric-sub">3 critical priority</div></div>
+            <div class="bat-metric"><div class="bat-metric-label">Completed Today</div><div class="bat-metric-value">2</div><div class="bat-metric-sub">Last: 22:41 hrs</div></div>
+            <div class="bat-metric"><div class="bat-metric-label">Gotham Threat</div><div class="bat-metric-value" style="font-size:18px">CRITICAL</div><div class="bat-metric-sub">↑ from HIGH at 19:00</div><div class="threat-bar"><div class="threat-fill" style="width:82%"></div></div></div>
+          </div>
+          <div class="bat-grid2">
+            <div class="bat-card accent">
+              <h3>Active Missions</h3>
+              <div id="missions-list">
+                <div class="mission-item">
+                  <div class="mission-priority critical"></div>
+                  <div class="mission-info"><div class="mission-name">Intercept Scarecrow toxin shipment</div><div class="mission-meta">Port of Gotham · Dock 7 · ETA 02:30 hrs</div></div>
+                  <span class="mission-status urgent">URGENT</span>
+                  <div class="mission-check" onclick="completeMission(this)"></div>
+                </div>
+                <div class="mission-item">
+                  <div class="mission-priority high"></div>
+                  <div class="mission-info"><div class="mission-name">Locate Penguin's underground lab</div><div class="mission-meta">The Narrows · Sector 9 · Intel: moderate</div></div>
+                  <span class="mission-status active">ACTIVE</span>
+                  <div class="mission-check" onclick="completeMission(this)"></div>
+                </div>
+                <div class="mission-item">
+                  <div class="mission-priority medium"></div>
+                  <div class="mission-info"><div class="mission-name">Patrol East End — gang activity</div><div class="mission-meta">East End District · Nightly patrol</div></div>
+                  <span class="mission-status active">ACTIVE</span>
+                  <div class="mission-check" onclick="completeMission(this)"></div>
+                </div>
+                <div class="mission-item">
+                  <div class="mission-priority low"></div>
+                  <div class="mission-info"><div class="mission-name">Follow up: Riddler's cipher clue</div><div class="mission-meta">Gotham PD Evidence — Case 7734</div></div>
+                  <span class="mission-status pending">PENDING</span>
+                  <div class="mission-check" onclick="completeMission(this)"></div>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div class="bat-card">
+                <h3>Add Mission</h3>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <input class="bat-input" id="new-mission-name" placeholder="Mission name...">
+                  <div style="display:flex;gap:8px">
+                    <select class="bat-input" id="new-mission-priority" style="flex:1">
+                      <option value="critical">🔴 Critical</option>
+                      <option value="high">🟡 High</option>
+                      <option value="medium">🟢 Medium</option>
+                      <option value="low">⚫ Low</option>
+                    </select>
+                    <select class="bat-input" id="new-mission-status" style="flex:1">
+                      <option value="urgent">Urgent</option>
+                      <option value="active">Active</option>
+                      <option value="pending">Pending</option>
+                    </select>
+                  </div>
+                  <input class="bat-input" id="new-mission-meta" placeholder="Location / notes...">
+                  <button class="bat-btn" onclick="addMission()" style="width:100%">+ ADD MISSION</button>
+                </div>
+              </div>
+              <div class="bat-card">
+                <h3>Recent Intel</h3>
+                <div style="font-family:'Courier Prime',monospace;font-size:12px;color:var(--bat-muted);line-height:1.8">
+                  <div style="color:var(--bat-yellow)">// 23:14 — Encrypted signal from Joker cell</div>
+                  <div>Triangulated: Amusement Mile · Confidence 78%</div>
+                  <div style="margin-top:8px;color:var(--bat-yellow)">// 22:55 — GCPD alert: Robbery spree</div>
+                  <div>Diamond District · 4 incidents · Pattern: Catwoman MO</div>
+                  <div style="margin-top:8px;color:var(--bat-yellow)">// 21:33 — Wayne Sat 7 anomaly</div>
+                  <div>Thermal spike: Old Gotham sewers · Possible Killer Croc</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COMMS -->
+        <div class="bat-panel" id="panel-comms">
+          <div class="comm-layout">
+            <div class="comm-contacts">
+              <div style="font-size:11px;color:var(--bat-muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">Allies</div>
+              <div class="comm-contact active" onclick="selectContact(this,'alfred','🎩','Alfred Pennyworth','Online · Batcave')">
+                <div class="comm-avatar">🎩</div>
+                <div><div class="comm-contact-name">Alfred</div><div class="comm-contact-status">Online · Batcave</div></div>
+                <div class="online-dot"></div>
+              </div>
+              <div class="comm-contact" onclick="selectContact(this,'nightwing','🦅','Dick Grayson / Nightwing','Blüdhaven')">
+                <div class="comm-avatar">🦅</div>
+                <div><div class="comm-contact-name">Nightwing</div><div class="comm-contact-status">Blüdhaven</div></div>
+                <div class="online-dot"></div>
+              </div>
+              <div class="comm-contact" onclick="selectContact(this,'oracle','💻','Barbara Gordon / Oracle','Online · Remote')">
+                <div class="comm-avatar">💻</div>
+                <div><div class="comm-contact-name">Oracle</div><div class="comm-contact-status">Online · Remote</div></div>
+                <div class="online-dot"></div>
+              </div>
+              <div class="comm-contact" onclick="selectContact(this,'robin','🐦','Tim Drake / Robin','On patrol')">
+                <div class="comm-avatar">🐦</div>
+                <div><div class="comm-contact-name">Robin</div><div class="comm-contact-status">On patrol</div></div>
+                <div class="online-dot" style="background:var(--bat-yellow)"></div>
+              </div>
+              <div class="comm-contact" onclick="selectContact(this,'gcpd','🚔','Commissioner Gordon','GCPD HQ')">
+                <div class="comm-avatar">🚔</div>
+                <div><div class="comm-contact-name">Commissioner</div><div class="comm-contact-status">GCPD HQ</div></div>
+                <div class="online-dot offline"></div>
+              </div>
+            </div>
+            <div class="comm-chat">
+              <div style="font-size:13px;font-weight:600;color:var(--bat-yellow);letter-spacing:1px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--bat-border)" id="chat-header">🎩 Alfred Pennyworth — AES-512 Encrypted Channel</div>
+              <div class="comm-messages" id="comm-messages"></div>
+              <div style="display:flex;gap:8px">
+                <input class="bat-input" id="comm-input" placeholder="Encrypted message..." onkeydown="if(event.key==='Enter')sendMessage()" style="flex:1">
+                <button class="bat-btn" onclick="sendMessage()">SEND</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EQUIPMENT -->
+        <div class="bat-panel" id="panel-equipment">
+          <div class="bat-grid2">
+            <div class="bat-card accent">
+              <h3>Suit &amp; Armor</h3>
+              <div class="equip-item">
+                <div class="equip-icon">🦇</div>
+                <div class="equip-info"><div class="equip-name">Mark XII Batsuit</div><div class="equip-spec">Nano-fiber · EMP-shielded · AR overlay</div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--bat-muted);margin-top:4px"><span>Integrity: 94%</span><span>Power: 91%</span></div><div class="equip-bar"><div class="equip-bar-fill green" style="width:94%"></div></div></div>
+                <button class="equip-toggle on" onclick="toggleEquip(this)"></button>
+              </div>
+              <div class="equip-item">
+                <div class="equip-icon">🪖</div>
+                <div class="equip-info"><div class="equip-name">Cowl — Neural Interface</div><div class="equip-spec">Tactical HUD · Comm link · Facial rec</div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--bat-muted);margin-top:4px"><span>Signal: Strong</span><span>Battery: 87%</span></div><div class="equip-bar"><div class="equip-bar-fill green" style="width:87%"></div></div></div>
+                <button class="equip-toggle on" onclick="toggleEquip(this)"></button>
+              </div>
+              <div class="equip-item">
+                <div class="equip-icon">🥋</div>
+                <div class="equip-info"><div class="equip-name">Utility Belt — Gen 9</div><div class="equip-spec">12 modules · Batarangs: 24 · Grapnel: ready</div><div class="equip-bar"><div class="equip-bar-fill green" style="width:100%"></div></div></div>
+                <button class="equip-toggle on" onclick="toggleEquip(this)"></button>
+              </div>
+            </div>
+            <div class="bat-card">
+              <h3>Vehicles</h3>
+              <div class="equip-item">
+                <div class="equip-icon">✈️</div>
+                <div class="equip-info"><div class="equip-name">Batwing — V7</div><div class="equip-spec">Stealth: OFF · Fuel: 100% · Armed</div><div class="equip-bar"><div class="equip-bar-fill green" style="width:100%"></div></div></div>
+                <button class="equip-toggle" onclick="toggleEquip(this)"></button>
+              </div>
+              <div class="equip-item">
+                <div class="equip-icon">🚗</div>
+                <div class="equip-info"><div class="equip-name">Batmobile — Mk9</div><div class="equip-spec">EMP ready · Fuel: 78% · Remote: ON</div><div class="equip-bar"><div class="equip-bar-fill yellow" style="width:78%"></div></div></div>
+                <button class="equip-toggle on" onclick="toggleEquip(this)"></button>
+              </div>
+              <div class="equip-item">
+                <div class="equip-icon">🏍️</div>
+                <div class="equip-info"><div class="equip-name">Batcycle — Ghost</div><div class="equip-spec">Silent electric · Fuel: 43% · Cloaking: standby</div><div class="equip-bar"><div class="equip-bar-fill red" style="width:43%"></div></div></div>
+                <button class="equip-toggle" onclick="toggleEquip(this)"></button>
+              </div>
+            </div>
+            <div class="bat-card">
+              <h3>Weapons &amp; Gadgets</h3>
+              <div class="equip-item">
+                <div class="equip-icon">🪃</div>
+                <div class="equip-info"><div class="equip-name">Batarang Launcher</div><div class="equip-spec">Smart-seek · 24 loaded · Safety: ON</div></div>
+                <button class="equip-toggle on" onclick="toggleEquip(this)"></button>
+              </div>
+              <div class="equip-item">
+                <div class="equip-icon">⚡</div>
+                <div class="equip-info"><div class="equip-name">EMP Grenades</div><div class="equip-spec">8 units · 50m radius · Recharge: 6hr</div></div>
+                <button class="equip-toggle on" onclick="toggleEquip(this)"></button>
+              </div>
+              <div class="equip-item">
+                <div class="equip-icon">🔗</div>
+                <div class="equip-info"><div class="equip-name">Grapnel Gun</div><div class="equip-spec">450m range · Reinforced cable</div></div>
+                <button class="equip-toggle on" onclick="toggleEquip(this)"></button>
+              </div>
+            </div>
+            <div class="bat-card">
+              <h3>Systems</h3>
+              <div class="equip-item">
+                <div class="equip-icon">🛰️</div>
+                <div class="equip-info"><div class="equip-name">Wayne Satellite Network</div><div class="equip-spec">7 active · Gotham coverage: 100%</div><div class="equip-bar"><div class="equip-bar-fill green" style="width:100%"></div></div></div>
+                <button class="equip-toggle on" onclick="toggleEquip(this)"></button>
+              </div>
+              <div class="equip-item">
+                <div class="equip-icon">🧬</div>
+                <div class="equip-info"><div class="equip-name">Batcave AI — Alfred v8.3</div><div class="equip-spec">All modules online · Neural sync: Active</div><div class="equip-bar"><div class="equip-bar-fill green" style="width:100%"></div></div></div>
+                <button class="equip-toggle on" onclick="toggleEquip(this)"></button>
+              </div>
+              <div class="equip-item">
+                <div class="equip-icon">🔐</div>
+                <div class="equip-info"><div class="equip-name">Batcave Lockdown Protocol</div><div class="equip-spec">Security: Level 5 · Perimeter: Armed</div></div>
+                <button class="equip-toggle" onclick="toggleEquip(this,true)"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MAP -->
+        <div class="bat-panel" id="panel-map" style="padding:14px">
+          <div style="position:relative;height:calc(100vh - 160px);min-height:460px">
+            <canvas id="gotham-canvas" style="position:absolute;inset:0;width:100%;height:100%;border-radius:10px;border:1px solid var(--bat-border)"></canvas>
+            <div style="position:absolute;top:14px;left:14px;z-index:10">
+              <div style="background:rgba(10,10,18,0.9);border:1px solid var(--bat-border);border-radius:8px;padding:8px 14px;font-family:'Courier Prime',monospace;font-size:12px;color:var(--bat-text);margin-bottom:8px">Incidents: <span id="map-incident-count" style="color:var(--bat-yellow)">7</span></div>
+              <div style="background:rgba(10,10,18,0.9);border:1px solid var(--bat-border);border-radius:8px;padding:8px 14px;font-family:'Courier Prime',monospace;font-size:12px;color:var(--bat-text);margin-bottom:8px">Bat-Signal: <span style="color:var(--bat-yellow)">ACTIVE</span></div>
+              <div style="background:rgba(10,10,18,0.9);border:1px solid var(--bat-border);border-radius:8px;padding:8px 14px;font-family:'Courier Prime',monospace;font-size:12px;color:var(--bat-text)">Threat: <span style="color:#ef4444">CRITICAL</span></div>
+            </div>
+            <div style="position:absolute;top:14px;right:14px;background:rgba(10,10,18,0.9);border:1px solid var(--bat-border);border-radius:8px;padding:12px 16px;z-index:10">
+              <div style="font-size:11px;color:var(--bat-muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Crime Index</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--bat-muted);margin-bottom:5px;font-family:'Courier Prime',monospace"><div style="width:10px;height:10px;border-radius:50%;background:#ef4444;flex-shrink:0"></div>Violent crime</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--bat-muted);margin-bottom:5px;font-family:'Courier Prime',monospace"><div style="width:10px;height:10px;border-radius:50%;background:#f97316;flex-shrink:0"></div>Robbery</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--bat-muted);margin-bottom:5px;font-family:'Courier Prime',monospace"><div style="width:10px;height:10px;border-radius:50%;background:#eab308;flex-shrink:0"></div>Gang activity</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--bat-muted);margin-bottom:10px;font-family:'Courier Prime',monospace"><div style="width:10px;height:10px;border-radius:50%;background:#8b5cf6;flex-shrink:0"></div>Villain sighting</div>
+              <button class="bat-btn" style="font-size:11px;padding:6px 12px;width:100%" onclick="addCrimeMarker()">+ REPORT CRIME</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- MUSIC -->
+        <div class="bat-panel" id="panel-music">
+          <div class="bat-grid2">
+            <div>
+              <div class="music-player">
+                <div class="music-artwork">
+                  <div class="music-art-visual" id="vinyl"><div class="music-art-inner"></div></div>
+                  <div style="position:absolute;bottom:10px;right:12px;font-size:10px;color:var(--bat-muted);font-family:'Courier Prime',monospace">BATCAVE AUDIO</div>
+                </div>
+                <div class="music-title" id="music-title">Dark Knight Theme</div>
+                <div class="music-artist" id="music-artist">Hans Zimmer · Gotham Nights OST</div>
+                <div style="margin-bottom:12px">
+                  <input type="range" class="music-seek" id="music-seek" min="0" max="100" value="0">
+                  <div class="music-times"><span id="music-current">0:00</span><span id="music-duration">0:00</span></div>
+                </div>
+                <div class="music-controls">
+                  <button class="music-btn" onclick="prevTrack()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 20L9 12l10-8v16z"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+                  </button>
+                  <button class="music-btn play" id="play-btn" onclick="togglePlay()">
+                    <svg id="play-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+                  </button>
+                  <button class="music-btn" onclick="nextTrack()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4l10 8-10 8V4z"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+                  </button>
+                </div>
+                <div class="music-volume">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--bat-muted)" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/></svg>
+                  <input type="range" class="music-vol-slider" id="volume-slider" min="0" max="1" step="0.01" value="0.7" oninput="setVolume(this.value)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--bat-muted)" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+                </div>
+              </div>
+              <div style="font-size:11px;color:var(--bat-muted);text-align:center;margin-top:-6px;margin-bottom:10px;font-family:'Courier Prime',monospace">Click a track in playlist to load &amp; play</div>
+            </div>
+            <div class="music-playlist">
+              <h3>Night Ops Playlist</h3>
+              <div id="playlist-container"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- Alfred Sidebar -->
+    <div class="alfred-sidebar">
+      <div class="alfred-header">
+        <div class="alfred-header-top">
+          <div class="alfred-ava">🎩</div>
+          <div><div class="alfred-header-name">ALFRED</div><div class="alfred-header-status">● Online</div></div>
+        </div>
+        <div style="font-size:11px;color:var(--bat-muted);font-family:'Courier Prime',monospace">AI Assistant v8.3 · Batcave</div>
+      </div>
+      <div class="alfred-chat" id="alfred-chat">
+        <div class="alfred-msg"><div class="msg-label">Alfred</div>Welcome back, Master Wayne. All systems nominal. The city needs you tonight — 7 active incidents detected.</div>
+        <div class="alfred-msg"><div class="msg-label">Alfred</div>Shall I prep a tactical briefing, or would you prefer to review the Gotham map first?</div>
+      </div>
+      <div class="alfred-input-area">
+        <div class="alfred-input-row">
+          <input class="alfred-input" id="alfred-msg-input" placeholder="Ask Alfred..." onkeydown="if(event.key==='Enter')sendAlfred()">
+          <button class="alfred-send" onclick="sendAlfred()">↑</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<audio id="audio-player" crossorigin="anonymous"></audio>
+
+<script>
+// ══ RIDDLE AUTH ══
+function openRiddle(){document.getElementById('riddle-modal').classList.add('show');typeAlfred();}
+function closeRiddle(){document.getElementById('riddle-modal').classList.remove('show');}
+function typeAlfred(){
+  const el=document.getElementById('alfred-greeting');
+  const text=`Good evening.\n\nI am Alfred — the Batcave's neural interface.\n\nBefore I grant you access to the secured operations platform, I need to confirm your identity, Master Wayne.\n\nAnswer my riddle correctly to proceed:`;
+  let i=0;el.innerHTML='';
+  const iv=setInterval(()=>{
+    if(i<text.length){el.innerHTML=text.slice(0,++i).replace(/\n/g,'<br>')+'<span style="color:var(--bat-yellow)">▋</span>';}
+    else{clearInterval(iv);el.innerHTML=text.replace(/\n/g,'<br>');document.getElementById('riddle-section').style.display='block';document.getElementById('riddle-question').textContent="I have no wings, but I fly through Gotham's night. No cape, yet I am always at your side — in your mind, your memory, your fight. Villains fear you, but who built your will?\n\nWhat am I?";setTimeout(()=>document.getElementById('riddle-answer').focus(),100);}
+  },18);
+}
+function checkAnswer(){
+  const ans=document.getElementById('riddle-answer').value.trim().toLowerCase();
+  const err=document.getElementById('riddle-error');
+  if(!ans){err.textContent='// Input required.';return;}
+  const valid=['training','discipline','fear','willpower','justice','determination','resolve'];
+  if(valid.some(a=>ans.includes(a))){
+    err.style.color='#22c55e';err.textContent='// Identity confirmed. Welcome, Dark Knight.';
+    setTimeout(enterBatcave,1200);
+  } else {
+    err.style.color='#ff6b6b';err.textContent='// Access denied. "'+ans+'" is incorrect. Try again.';
+    document.getElementById('riddle-answer').value='';document.getElementById('riddle-answer').focus();
+  }
+}
+function enterBatcave(){
+  const portal=document.getElementById('we-portal');const dash=document.getElementById('bat-dash');
+  portal.style.opacity='0';portal.style.transform='scale(1.05)';
+  setTimeout(()=>{
+    portal.style.display='none';document.getElementById('riddle-modal').classList.remove('show');
+    dash.classList.add('show');dash.style.opacity='0';
+    setTimeout(()=>{dash.style.transition='opacity 0.6s';dash.style.opacity='1';},50);
+    startClock();initMap();renderMessages('alfred');
+  },600);
+}
+
+// ══ CLOCK ══
+function startClock(){
+  function tick(){const n=new Date();document.getElementById('bat-clock').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');}
+  tick();setInterval(tick,1000);
+}
+
+// ══ TABS ══
+function switchTab(name){
+  document.querySelectorAll('.bat-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.bat-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.bat-nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='map')setTimeout(initMap,100);
+}
+
+// ══ MISSIONS ══
+function completeMission(el){
+  el.classList.toggle('done');
+  const item=el.closest('.mission-item');const status=item.querySelector('.mission-status');
+  if(el.classList.contains('done')){item.style.opacity='0.5';status.textContent='COMPLETE';status.className='mission-status complete';}
+  else{item.style.opacity='1';status.textContent='ACTIVE';status.className='mission-status active';}
+}
+function addMission(){
+  const name=document.getElementById('new-mission-name').value.trim();if(!name)return;
+  const priority=document.getElementById('new-mission-priority').value;
+  const status=document.getElementById('new-mission-status').value;
+  const meta=document.getElementById('new-mission-meta').value||'Gotham City';
+  const labels={urgent:'URGENT',active:'ACTIVE',pending:'PENDING'};
+  const item=document.createElement('div');item.className='mission-item fade-in';
+  item.innerHTML=`<div class="mission-priority ${priority}"></div><div class="mission-info"><div class="mission-name">${name}</div><div class="mission-meta">${meta}</div></div><span class="mission-status ${status}">${labels[status]}</span><div class="mission-check" onclick="completeMission(this)"></div>`;
+  document.getElementById('missions-list').prepend(item);
+  document.getElementById('new-mission-name').value='';document.getElementById('new-mission-meta').value='';
+}
+
+// ══ COMMS ══
+const contactMessages={
+  alfred:[
+    {from:'alfred',avatar:'🎩',text:"Master Wayne, the Scarecrow shipment has been confirmed at Dock 7. I've uploaded the cargo manifests to your tactical feed. You'll want to move before 02:30.",time:'23:02'},
+    {from:'you',avatar:'🦇',text:"Understood. Suit charged? I'll take the Batwing.",time:'23:04'},
+    {from:'alfred',avatar:'🎩',text:"Suit at 98%. Batwing is prepped, fuel topped. Also — Penguin's men were spotted near the Narrows. Two birds, one stone, as they say.",time:'23:05'},
+  ],
+  nightwing:[
+    {from:'nightwing',avatar:'🦅',text:"Bruce. Three of Penguin's goons just tried to cross into Blüdhaven. I sent them back.",time:'22:15'},
+    {from:'you',avatar:'🦇',text:"They're running. Penguin knows we're closing in.",time:'22:17'},
+  ],
+  oracle:[
+    {from:'oracle',avatar:'💻',text:"I've cracked the Riddler cipher. It points to an address on Finger Street. Coordinates uploading now.",time:'21:50'},
+    {from:'you',avatar:'🦇',text:"Good work, Babs. I'll head there after Dock 7.",time:'21:52'},
+    {from:'oracle',avatar:'💻',text:"Be careful — thermal imaging shows 8 heat signatures inside.",time:'21:53'},
+  ],
+  robin:[
+    {from:'robin',avatar:'🐦',text:"B, I'm on East End patrol. Found a cache of Scarecrow gas canisters in an alley. What do I do?",time:'23:10'},
+    {from:'you',avatar:'🦇',text:"Don't touch them. Tag the location and pull back. I'll send GCPD with hazmat.",time:'23:11'},
+  ],
+  gcpd:[{from:'gcpd',avatar:'🚔',text:"Batman, we've had 4 armed robberies in the Diamond District. Catwoman's MO but unconfirmed.",time:'22:30'}]
+};
+let currentContact='alfred';
+function selectContact(el,id,avatar,name){
+  document.querySelectorAll('.comm-contact').forEach(c=>c.classList.remove('active'));el.classList.add('active');currentContact=id;
+  document.getElementById('chat-header').textContent=`${avatar} ${name} — AES-512 Encrypted`;renderMessages(id);
+}
+function renderMessages(id){
+  const msgs=contactMessages[id]||[];
+  document.getElementById('comm-messages').innerHTML=msgs.map(m=>`<div class="comm-msg ${m.from==='you'?'sent':''}"><div class="comm-avatar">${m.avatar}</div><div><div class="comm-bubble">${m.text}</div><div class="comm-meta">${m.from==='you'?'You':m.from} · ${m.time}</div></div></div>`).join('');
+  document.getElementById('comm-messages').scrollTop=99999;
+}
+function sendMessage(){
+  const input=document.getElementById('comm-input');const text=input.value.trim();if(!text)return;
+  const now=new Date();const time=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  if(!contactMessages[currentContact])contactMessages[currentContact]=[];
+  contactMessages[currentContact].push({from:'you',avatar:'🦇',text,time});input.value='';renderMessages(currentContact);
+  if(currentContact==='alfred'){
+    setTimeout(()=>{
+      const replies=["Understood, Master Wayne. I'll see to it immediately.","Very well. I've noted that and will act accordingly.","As you wish. Consider it done.","Noted. I'll have that ready for your return.","Wise decision, sir. I'll begin preparations."];
+      contactMessages['alfred'].push({from:'alfred',avatar:'🎩',text:replies[Math.floor(Math.random()*replies.length)],time});renderMessages('alfred');
+    },800+Math.random()*600);
+  }
+}
+
+// ══ EQUIPMENT ══
+function toggleEquip(btn,lockdown){
+  btn.classList.toggle('on');
+  if(lockdown&&btn.classList.contains('on'))addAlfredMsg('⚠ LOCKDOWN PROTOCOL ACTIVATED. Perimeter sealed. All entry points secured.');
+}
+
+// ══ MAP ══
+let mapAnimFrame,mapCrimes=[
+  {x:0.3,y:0.25,type:'violent',label:'Armed robbery — The Narrows',color:'#ef4444'},
+  {x:0.65,y:0.35,type:'villain',label:'Penguin sighting — East End',color:'#8b5cf6'},
+  {x:0.45,y:0.6,type:'robbery',label:'Robbery spree — Diamond District',color:'#f97316'},
+  {x:0.2,y:0.55,type:'gang',label:'Gang activity — Crime Alley',color:'#eab308'},
+  {x:0.75,y:0.5,type:'violent',label:'Scarecrow toxin — Dock 7',color:'#ef4444'},
+  {x:0.5,y:0.2,type:'villain',label:'Joker signal — Amusement Mile',color:'#8b5cf6'},
+  {x:0.38,y:0.78,type:'gang',label:'Killer Croc — Old Sewers',color:'#eab308'},
+];
+let mapTime=0,batmanPos={x:0.5,y:0.45},hoveredCrime=null;
+
+function initMap(){
+  const canvas=document.getElementById('gotham-canvas');if(!canvas)return;
+  if(mapAnimFrame)cancelAnimationFrame(mapAnimFrame);
+  const ctx=canvas.getContext('2d');
+  function resize(){canvas.width=canvas.offsetWidth;canvas.height=canvas.offsetHeight;}
+  resize();
+  canvas.addEventListener('mousemove',(e)=>{
+    const r=canvas.getBoundingClientRect();const mx=(e.clientX-r.left)/canvas.width;const my=(e.clientY-r.top)/canvas.height;
+    hoveredCrime=null;
+    for(const c of mapCrimes){const dx=(c.x-mx)*canvas.width;const dy=(c.y-my)*canvas.height;if(Math.sqrt(dx*dx+dy*dy)<20){hoveredCrime=c;break;}}
+    canvas.style.cursor=hoveredCrime?'pointer':'default';
+  });
+  canvas.addEventListener('click',(e)=>{const r=canvas.getBoundingClientRect();batmanPos={x:(e.clientX-r.left)/canvas.width,y:(e.clientY-r.top)/canvas.height};});
+  function draw(){
+    const W=canvas.width,H=canvas.height;mapTime+=0.02;ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#080810';ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='rgba(246,201,14,0.06)';ctx.lineWidth=0.5;
+    for(let x=0;x<W;x+=W/16){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=H/12){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    ctx.strokeStyle='rgba(246,201,14,0.12)';ctx.lineWidth=1.5;
+    [[0,H*0.33,W,H*0.33],[0,H*0.55,W,H*0.55],[0,H*0.72,W,H*0.72],[W*0.25,0,W*0.25,H],[W*0.5,0,W*0.5,H],[W*0.73,0,W*0.73,H]].forEach(([x1,y1,x2,y2])=>{ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();});
+    const twx=W*0.5,twy=H*0.45;
+    ctx.strokeStyle='rgba(246,201,14,0.5)';ctx.lineWidth=1;ctx.strokeRect(twx-18,twy-38,36,50);
+    ctx.fillStyle='rgba(246,201,14,0.08)';ctx.fillRect(twx-18,twy-38,36,50);
+    ctx.fillStyle='rgba(246,201,14,0.7)';ctx.font='bold 9px "Courier Prime",monospace';ctx.textAlign='center';ctx.fillText('WE',twx,twy+20);
+    ctx.fillStyle='rgba(20,40,80,0.6)';ctx.beginPath();ctx.moveTo(0,H*0.88);
+    for(let x=0;x<=W;x+=5)ctx.lineTo(x,H*0.88+Math.sin(x*0.02+mapTime)*4+5);
+    ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.fill();
+    ctx.fillStyle='rgba(246,201,14,0.2)';ctx.font='10px "Courier Prime",monospace';ctx.textAlign='center';
+    [[W*0.14,H*0.18,'THE NARROWS'],[W*0.63,H*0.18,'AMUSEMENT MILE'],[W*0.14,H*0.65,'CRIME ALLEY'],[W*0.63,H*0.65,'EAST END'],[W*0.38,H*0.82,'OLD GOTHAM'],[W*0.75,H*0.82,'DIAMOND DIST.']].forEach(([x,y,n])=>ctx.fillText(n,x,y));
+    mapCrimes.forEach((c,i)=>{
+      const cx=c.x*W,cy=c.y*H,phase=mapTime+i*1.1;
+      ctx.beginPath();ctx.arc(cx,cy,10+Math.sin(phase)*6,0,Math.PI*2);ctx.strokeStyle=c.color+'44';ctx.lineWidth=1.5;ctx.stroke();
+      ctx.beginPath();ctx.arc(cx,cy,16+Math.sin(phase+1)*8,0,Math.PI*2);ctx.strokeStyle=c.color+'22';ctx.lineWidth=1;ctx.stroke();
+      ctx.beginPath();ctx.arc(cx,cy,6,0,Math.PI*2);ctx.fillStyle=c.color;ctx.shadowColor=c.color;ctx.shadowBlur=12;ctx.fill();ctx.shadowBlur=0;
+      if(hoveredCrime===c){
+        const tw=ctx.measureText(c.label).width+20;const lx=cx+12,ly=cy-14;
+        ctx.fillStyle='rgba(10,10,20,0.92)';ctx.strokeStyle=c.color;ctx.lineWidth=1;
+        roundRect(ctx,lx,ly-16,tw,22,5);ctx.fill();ctx.stroke();
+        ctx.fillStyle='#e8e8f0';ctx.font='11px "Courier Prime",monospace';ctx.textAlign='left';ctx.fillText(c.label,lx+10,ly-1);ctx.textAlign='center';
+      }
+    });
+    const bx=batmanPos.x*W,by=batmanPos.y*H;
+    ctx.beginPath();ctx.arc(bx,by,20+Math.sin(mapTime*2)*3,0,Math.PI*2);ctx.strokeStyle='rgba(246,201,14,0.15)';ctx.lineWidth=2;ctx.stroke();
+    ctx.save();ctx.translate(bx,by);ctx.fillStyle='#F6C90E';ctx.shadowColor='#F6C90E';ctx.shadowBlur=16;
+    ctx.beginPath();ctx.ellipse(0,-2,9,5,0,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(-6,-4,4,Math.PI*0.8,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(6,-4,4,Math.PI,Math.PI*2.2);ctx.fill();
+    ctx.shadowBlur=0;ctx.restore();
+    const sig=0.6+Math.sin(mapTime*0.8)*0.2;
+    ctx.save();const grad=ctx.createRadialGradient(W*0.9,H*0.05,5,W*0.5,H*0.5,W*0.6);
+    grad.addColorStop(0,`rgba(246,201,14,${sig*0.15})`);grad.addColorStop(1,'rgba(246,201,14,0)');
+    ctx.fillStyle=grad;ctx.beginPath();ctx.moveTo(W*0.9,H*0.05);ctx.lineTo(W*0.35,H*0.85);ctx.lineTo(W*0.75,H*0.85);ctx.closePath();ctx.fill();ctx.restore();
+    mapAnimFrame=requestAnimationFrame(draw);
+  }
+  draw();
+}
+function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();}
+function addCrimeMarker(){
+  const types=['violent','robbery','gang','villain'];const colors={violent:'#ef4444',robbery:'#f97316',gang:'#eab308',villain:'#8b5cf6'};
+  const labels=['New incident reported','Armed suspect spotted','Gang activity detected','Villain sighting'];
+  const t=types[Math.floor(Math.random()*types.length)];
+  mapCrimes.push({x:0.1+Math.random()*0.8,y:0.1+Math.random()*0.75,type:t,label:labels[types.indexOf(t)],color:colors[t]});
+  document.getElementById('map-incident-count').textContent=mapCrimes.length;
+  addAlfredMsg('🚨 New '+t+' incident detected and added to tactical map. Incident count: '+mapCrimes.length+'.');
+}
+
+// ══ MUSIC ══
+const playlist=[
+  {title:'Dark Knight Theme',artist:'Hans Zimmer · Gotham OST',url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',dur:372},
+  {title:'Night Patrol',artist:'Batcave Ambience Mix',url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',dur:291},
+  {title:'Arkham Shadows',artist:'Danny Elfman · Batman 89',url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',dur:315},
+  {title:'Wings Over Gotham',artist:'Lorne Balfe · Tactical Mix',url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',dur:248},
+  {title:'The Bat Returns',artist:'Hans Zimmer · Rises OST',url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',dur:407},
+];
+let currentTrack=0,isPlaying=false;
+const audio=document.getElementById('audio-player');
+audio.volume=0.7;
+
+function initPlaylist(){
+  document.getElementById('playlist-container').innerHTML=playlist.map((t,i)=>`<div class="playlist-item ${i===0?'active':''}" id="pl-${i}" onclick="loadTrack(${i},true)"><div class="playlist-num" id="pl-num-${i}">${i+1}</div><div class="playlist-info"><div class="playlist-title">${t.title}</div><div class="playlist-artist">${t.artist}</div></div><div class="playlist-dur">${formatTime(t.dur)}</div></div>`).join('');
+}
+function loadTrack(idx,autoplay){
+  currentTrack=idx;const t=playlist[idx];
+  document.getElementById('music-title').textContent=t.title;document.getElementById('music-artist').textContent=t.artist;
+  document.querySelectorAll('.playlist-item').forEach((el,i)=>{el.classList.toggle('active',i===idx);document.getElementById('pl-num-'+i).textContent=i===idx?'▶':(i+1);});
+  audio.src=t.url;document.getElementById('music-duration').textContent=formatTime(t.dur);
+  document.getElementById('music-seek').value=0;document.getElementById('music-current').textContent='0:00';
+  if(autoplay)audio.play().then(()=>setPlaying(true)).catch(()=>setPlaying(false));else setPlaying(false);
+}
+function togglePlay(){
+  if(isPlaying){audio.pause();setPlaying(false);}
+  else{if(!audio.src||audio.src==='')audio.src=playlist[currentTrack].url;audio.play().then(()=>setPlaying(true)).catch(()=>setPlaying(false));}
+}
+function setPlaying(state){
+  isPlaying=state;document.getElementById('vinyl').classList.toggle('playing',state);
+  document.getElementById('play-icon').innerHTML=state?'<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>':'<polygon points="5,3 19,12 5,21"/>';
+}
+function prevTrack(){loadTrack((currentTrack-1+playlist.length)%playlist.length,isPlaying);}
+function nextTrack(){loadTrack((currentTrack+1)%playlist.length,isPlaying);}
+function setVolume(v){audio.volume=parseFloat(v);}
+function formatTime(s){const m=Math.floor(s/60),sec=Math.floor(s%60);return m+':'+(sec<10?'0':'')+sec;}
+audio.addEventListener('timeupdate',()=>{if(audio.duration){document.getElementById('music-seek').value=(audio.currentTime/audio.duration)*100;document.getElementById('music-current').textContent=formatTime(audio.currentTime);document.getElementById('music-duration').textContent=formatTime(audio.duration);}});
+audio.addEventListener('ended',nextTrack);
+document.getElementById('music-seek').addEventListener('input',function(){if(audio.duration)audio.currentTime=(this.value/100)*audio.duration;});
+
+// ══ ALFRED CHAT ══
+const alfredResponses={
+  'map|gotham|crime|incident':"I'm detecting 7 active incidents across Gotham. Shall I prioritize by threat level? The Dock 7 situation is most time-sensitive.",
+  'mission|task|quest':"Current active missions: Dock 7 intercept (critical), Penguin lab (high), East End patrol (medium). I recommend Dock 7 first — window closes at 02:30.",
+  'suit|armor|batsuit|equipment':"Mark XII suit is at 94% integrity. All systems nominal. Batwing is prepped and fuelled. Utility belt: fully stocked.",
+  'batwing|vehicle|batmobile':"Batwing is fuelled at 100%, stealth mode ready. Batmobile at 78% fuel with EMP primed. Which do you require for tonight's operation?",
+  'music|song|playlist':"I've loaded the Night Ops playlist. Hans Zimmer does have a certain... motivational quality, don't you agree, sir?",
+  'hello|hi|good|evening|morning':"Good evening, Master Wayne. Gotham City is in need of her protector tonight. 7 active incidents, threat level critical.",
+  'joker|scarecrow|penguin|riddler|catwoman':"I've cross-referenced the villain activity with past patterns. Shall I pull up the full threat dossier?",
+  'default':"Understood, sir. Is there anything specific you require for tonight's patrol? I'm at your disposal.",
+};
+function sendAlfred(){
+  const input=document.getElementById('alfred-msg-input');const text=input.value.trim();if(!text)return;input.value='';addUserMsg(text);
+  setTimeout(()=>{
+    const lower=text.toLowerCase();let reply=alfredResponses.default;
+    for(const[key,val]of Object.entries(alfredResponses)){if(key.split('|').some(k=>lower.includes(k))){reply=val;break;}}
+    addAlfredMsg(reply);
+  },700+Math.random()*500);
+}
+function addUserMsg(text){const chat=document.getElementById('alfred-chat');const el=document.createElement('div');el.className='alfred-msg user fade-in';el.innerHTML=`<div class="msg-label">You</div>${text}`;chat.appendChild(el);chat.scrollTop=chat.scrollHeight;}
+function addAlfredMsg(text){const chat=document.getElementById('alfred-chat');const el=document.createElement('div');el.className='alfred-msg fade-in';el.innerHTML=`<div class="msg-label">Alfred</div>${text}`;chat.appendChild(el);chat.scrollTop=chat.scrollHeight;}
+
+// ══ INIT ══
+initPlaylist();
+</script>
 </body>
 </html>
